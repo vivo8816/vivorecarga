@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento via PIX</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="logo.png" type="image/png">
+
+    <!-- Descrição e outras informações -->
+    <meta name="description" content="Pagamento via PIX">
+    <meta property="og:title" content="Pagamento via PIX">
+    <meta property="og:description" content="Finalize seu pagamento via PIX.">
+    <meta property="og:image" content="logo.png">
+    <meta property="og:url" content="URL_DO_SEU_SITE/pix.html">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&amp;display=swap">
+    <link rel="stylesheet" href="1.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+        .header {
+            background-color: #f8f8f8;
+            padding: 10px;
+            text-align: center;
+            position: static; /* Mudado para static para não flutuar */
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+        .header .logo {
+            max-width: 150px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            position: relative;
+        }
+        .details {
+            margin-bottom: 20px;
+        }
+        .details p {
+            font-size: 18px;
+        }
+        #qr-code {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        #qr-code .qr-box {
+            width: 200px;
+            height: 200px;
+            border: 2px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        #qr-code .qr-box img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        #pix-key {
+            background-color: #f1f1f1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            overflow: hidden; /* Garante que o texto não saia do retângulo */
+            word-wrap: break-word; /* Quebra o texto longo se necessário */
+            margin-bottom: 20px;
+        }
+        #pix-key span {
+            flex: 1; /* Faz com que o texto ocupe o espaço disponível */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Adiciona reticências se o texto for muito longo */
+            white-space: nowrap; /* Garante que o texto não quebre em várias linhas */
+        }
+        #pix-key button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            font-size: 14px;
+            background-color: #a58cc2; /* Cor lilás */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #pix-key button:hover {
+            background-color: #8a6f9b; /* Cor lilás mais escura */
+        }
+        #instructions {
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        #pix-image {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 70px; /* Ajuste o tamanho conforme necessário */
+        }
+        #timer {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <img src="logo.png" alt="Logo" class="logo">
+    </header>
+
+    <div class="container">
+        <h1>Pagamento via PIX</h1>
+        <div class="details">
+            <p>Número: <span id="phone"></span></p>
+            <p>Plano: <span id="plan"></span></p>
+            <p>Valor: R$ <span id="value"></span></p>
+            <p>E-mail: <span id="email"></span></p>
+        </div>
+        
+        <p>Use o código QR ou a chave PIX abaixo para finalizar o pagamento:</p>
+        <div id="qr-code">
+            <div class="qr-box">
+            
+
+
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAR0AAAEdAQMAAAALpCE4AAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAADVElEQVRoge1ZQY6jQAz0KIc+8oT+CXwMKUh8jPyEJ+TYBxRvVbmHsHmBNUofMgRqDo7tcpUx+57v+fNncPeX3Xf78dXL4znXNvlizYYVT3CVFoQ/I0BA3txGfv1x3/F83eNpVtDqbRwOs8mP+Mqr2hAs/jE9SLmZhaw2PW+7P/iRH3SwgBYrLCHcO6xslh3EemJaRkRXVFTT0yrL66PosoGYkWHdEeLnx0ebJwP1EKv6VtEVVhZIyD5OMhCDeJkBxMrHIXu6t98HaUHk+TM635AlVNZtR0scZM8lLejSwQcbQXHO+IoEtfH9E+QDLYaYxO4MB1UkZPt53v0dXUYQyx+BMSN7eUAcKEGNQwvEaXlBurtUf4SMQbC46n2xvSdCOhAaoThuIDCGiIwwS4LX8koMQjJYSoxuFbKSOBHYKcyygqAU1aio/B2Tda4atI1tXLbMIBA7n6PoeTfEgRlHrp+jKiVolUD3aISJPcDmlfZtl7SkA9kdo9Tm6q48kOynoEuU15YYRLqEv4OMIQmpskbJXiPtZwYtHFBMBnuA7lSDNqJ7G9OEILAOTWgw5UQlFqJdHZIYBLJvbOOwdmPImHs4JHJ/YpDLXogzRTiAezSCujoraJAawGyi2JWrE2eWUybkBbGeSJJPso4rQSgqrgfexJoQxM2Fxa5I4bikeu1i8tfkZQTd965gyJ7SZA6ypy6o5yogIwhKDJ+SXjM3FzNzwy0AAxsTg7hjAUnS0JnUQBhT6fXTbaQEzRXX9/D+UsGKrmwh0fKCQJeqpzaRMykhRfa6dxXI6UAcS/xTVEoWZlorOiToPAlB3NOpZakGurRx8Sj8U27QTlOhuy7WkU2SMCvneE0KYkZ0A/C+K2LEe2qQdWvXZFFpNBAipxSurnItHwjmiMnwWB0ZHRJCDE12at+MoO7lwvurqF7RHLTV50+QDzR0e6F9AN1GdIOu9HYxKyiQfVkntyE1oPF6at+MoHgrd3Mhi968cF4ZHcglLQlBSxdc/e5NbxeDia42KR9I2/9Y6XbGf6nGWE+XtGUF9dfPcqfO9ehGW31ZWCcFcdM/aJGxavvFr9wMZAYtsd/Ssk6GroXL5tvF/4ouG4gdjA+FE9t/DS2PUZUX9D3f86fPP2orjE3lqSeeAAAAAElFTkSuQmCC">
+
+
+            </div>
+        </div>
+
+        <div id="pix-key">
+            <span>a19d4e86-4ebb-4f42-aca4-705c3a60fd62</span>
+            <button onclick="copyPixKey()">Copiar Chave</button>
+        </div>
+
+        <div id="instructions">
+            <p>Para realizar o pagamento:</p>
+            <ul>
+                <li>Abra seu aplicativo bancário.</li>
+                <li>Selecione a opção de pagamento via PIX.</li>
+                <li>Use o código QR abaixo para escanear, ou copie a chave PIX e cole no campo apropriado.</li>
+                <li>Finalize o pagamento conforme as instruções do seu aplicativo.</li>
+            </ul>
+        </div>
+
+        <div id="timer">15:00</div>
+    </div>
+
+    <img id="pix-image" src="pix.png" alt="Imagem PIX">
+
+    <script>
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.slice(1);
+            const queryArr = queryString.split('&');
+            queryArr.forEach(param => {
+                const [key, value] = param.split('=');
+                params[key] = decodeURIComponent(value);
+            });
+            return params;
+        }
+
+        function displayPaymentDetails() {
+            const params = getQueryParams();
+            document.getElementById('phone').textContent = params.phone || 'Não informado';
+            document.getElementById('plan').textContent = params.plan || 'Não informado';
+            document.getElementById('value').textContent = params.value || 'Não informado';
+            document.getElementById('email').textContent = params.email || 'Não informado';
+        }
+
+        function copyPixKey() {
+            const pixKey = document.querySelector('#pix-key span').textContent;
+            navigator.clipboard.writeText(pixKey).then(() => {
+                alert('Chave PIX copiada para a área de transferência!');
+            });
+        }
+
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (--timer < 0) {
+                    timer = 0;
+                }
+            }, 1000);
+        }
+
+        window.onload = function () {
+            const fifteenMinutes = 60 * 15;
+            const display = document.querySelector('#timer');
+            startTimer(fifteenMinutes, display);
+            displayPaymentDetails();
+        };
+    </script>
+
+</body>
+</html>
